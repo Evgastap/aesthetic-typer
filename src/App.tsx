@@ -10,7 +10,6 @@ function App() {
 
   const [inputWrong, setInputWrong] = useState("");
 
-  // todo: fix bug where if currentString is 1 in length, and you type the correct string, it will work
   const handleKeyPress = (e: React.KeyboardEvent) => {
     const key = e.key;
     if (key === words.currentString && !inputWrong) {
