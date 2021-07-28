@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Timer from "./Timer";
 
-function App() {
+const App = () => {
   // state for the words you need to type
   const [words, setWords] = useState({
     prevString: "", // previously typed out letters
@@ -69,9 +70,7 @@ function App() {
 
   // useEffect to fetch random words on reload and set state
   useEffect(() => {
-    fetch(
-      "/.netlify/functions/random-words", 
-    )
+    fetch("/.netlify/functions/random-words")
       .then((res) => res.json())
       .then((data) => {
         // console.log(data.words);
@@ -90,35 +89,38 @@ function App() {
       tabIndex={0}
       onKeyDown={(e) => handleKeyPress(e)}
     >
-      {(words.nextString || words.prevString) && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="w-3/4 max-w-4xl text-justify bg-gray-800 rounded-lg p-5"
-        >
-          <div className="text-blue-400 inline">{words.prevString}</div>
+      <div className="w-3/4 relative block max-w-4xl">
+      {words.prevString && <Timer />}
+        {(words.nextString || words.prevString) && (
           <motion.div
-            layout
-            transition={{ type: "tween", duration: 0.075 }}
-            className="text-green-300 inline absolute text-xl -mx-1 -my-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-full text-justify font-mono bg-gray-800 rounded-lg p-5"
           >
+            <div className="text-blue-400 inline">{words.prevString}</div>
             <motion.div
-              animate={{ opacity: [0, 1] }}
-              transition={{ duration: 0.001 }}
+              layout
+              transition={{ type: "tween", duration: 0.075 }}
+              className="text-green-300 inline absolute text-xl -mx-1 -my-1"
             >
-              |
+              <motion.div
+                animate={{ opacity: [0, 1] }}
+                transition={{ duration: 0.001 }}
+              >
+                |
+              </motion.div>
             </motion.div>
+            <div
+              className={`${inputWrong ? "text-red-400" : "text-white"} inline`}
+            >
+              {/*inputWrong ? inputWrong : */ words.currentString}
+            </div>
+            <div className="text-white inline">{words.nextString}</div>
           </motion.div>
-          <div
-            className={`${inputWrong ? "text-red-400" : "text-white"} inline`}
-          >
-            {/*inputWrong ? inputWrong : */ words.currentString}
-          </div>
-          <div className="text-white inline">{words.nextString}</div>
-        </motion.div>
-      )}
+        )}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
