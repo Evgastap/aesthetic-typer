@@ -2,14 +2,18 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 function App() {
+
+  // state for the words you need to type
   const [words, setWords] = useState({
-    prevString: "",
-    currentString: "",
-    nextString: "",
+    prevString: "", // previously typed out letters
+    currentString: "", // current letters you need to type, for input matching
+    nextString: "", // next letters you need to type
   });
 
+  // state for storing incorrect input
   const [inputWrong, setInputWrong] = useState("");
 
+  // function to handle key presses
   const handleKeyPress = (e: React.KeyboardEvent) => {
     const key = e.key;
     if (key === words.currentString && !inputWrong) {
@@ -27,6 +31,7 @@ function App() {
         setInputWrong(inputWrong.substr(0, inputWrong.length - 1));
         setWords({
           prevString: words.prevString,
+          // prevents current string from becoming empty
           currentString: words.currentString.substring(
             0,
             Math.max(words.currentString.length - 1, 1)
@@ -37,7 +42,7 @@ function App() {
               : words.currentString.substr(-1) + words.nextString,
         });
       } else {
-        // if you're just trying to erase a correct key
+        // if user is just trying to erase a correct key
         setWords({
           prevString: words.prevString.substring(
             0,
@@ -63,6 +68,7 @@ function App() {
     }
   };
 
+  // useEffect to fetch random words on reload and set state
   useEffect(() => {
     fetch(
       "https://popular-words-api.herokuapp.com/api/words/randomlist?size=50&minrank=1&maxrank=500"
