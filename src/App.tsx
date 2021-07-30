@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Timer from "./Timer";
+import { useTimer } from 'react-timer-hook';
 
 const App = () => {
   // state for the words you need to type
@@ -13,8 +14,27 @@ const App = () => {
   // state for storing incorrect input
   const [inputWrong, setInputWrong] = useState("");
 
+  // useTimer hook for tracking time spent typing
+  const expiryTimestamp = new Date().getTime();
+  const {
+    seconds,
+    minutes,
+    isRunning,
+    restart
+  } = useTimer({
+    expiryTimestamp,
+    onExpire: () => console.warn("onExpire called"),
+  });
+
   // function to handle key presses
   const handleKeyPress = (e: React.KeyboardEvent) => {
+    // start the timer if hasn't started yet
+    if (!isRunning) {
+      const time = new Date();
+      time.setSeconds(time.getSeconds() + 60);
+      restart(time.getTime());
+     }
+
     const key = e.key;
     if (key === words.currentString && !inputWrong) {
       // input is correct
@@ -90,7 +110,7 @@ const App = () => {
       onKeyDown={(e) => handleKeyPress(e)}
     >
       <div className="w-3/4 relative block max-w-4xl">
-        {words.prevString && <Timer />}
+        {isRunning && words.prevString && <Timer seconds={seconds} minutes={minutes} />}
         <motion.div
           layout
           initial={{ opacity: 0 }}
