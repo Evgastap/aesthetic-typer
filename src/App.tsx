@@ -159,7 +159,7 @@ const App = () => {
         >
           {(words.nextString || words.prevString) && (
             <>
-              <div className="text-blue-400 inline">{words.prevString}</div>
+              <div className="text-darcula-purple inline">{words.prevString}</div>
               <motion.div
                 layout
                 transition={{ type: "tween", duration: 0.075 }}
