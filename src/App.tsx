@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Timer from "./Timer";
-import { useTimer } from 'react-timer-hook';
+import { useTimer } from "react-timer-hook";
+import Dashbaord from "./Dashbaord";
 
 const App = () => {
   // state for the words you need to type
@@ -12,19 +13,47 @@ const App = () => {
   });
 
   // state for storing incorrect input
+  // todo: move to words state
   const [inputWrong, setInputWrong] = useState("");
 
   // useTimer hook for tracking time spent typing
   const expiryTimestamp = new Date().getTime();
-  const {
-    seconds,
-    minutes,
-    isRunning,
-    restart
-  } = useTimer({
+  const { seconds, minutes, isRunning, restart } = useTimer({
     expiryTimestamp,
-    onExpire: () => console.warn("onExpire called"),
+    onExpire: () => console.log(stats),
   });
+
+  const [stats, setStats] = useState({
+    correctKeystrokes: new Array(60).fill(0),
+    incorrectKeystrokes: new Array(60).fill(0),
+    backspaceKeystrokes: new Array(60).fill(0),
+    wordsTyped: new Array(60).fill(0),
+  });
+
+  // function to update the number of correct & incorrect keystrokes
+  const updateKeystrokes = (keystroke: string) => {
+    switch (keystroke) {
+      case "correct":
+        const newCorrectKeystrokes = stats.correctKeystrokes;
+        newCorrectKeystrokes[60 - (seconds + minutes * 60)] += 1;
+        setStats({ ...stats, correctKeystrokes: newCorrectKeystrokes });
+        break;
+      case "backspace":
+        const newBackspaceKeystrokes = stats.backspaceKeystrokes;
+        newBackspaceKeystrokes[60 - (seconds + minutes * 60)] += 1;
+        setStats({ ...stats, backspaceKeystrokes: newBackspaceKeystrokes });
+        break;
+      case "incorrect":
+        const newIncorrectKeystrokes = stats.incorrectKeystrokes;
+        newIncorrectKeystrokes[60 - (seconds + minutes * 60)] += 1;
+        setStats({ ...stats, incorrectKeystrokes: newIncorrectKeystrokes });
+        break;
+      case "space": 
+        const newWordsTyped = stats.wordsTyped;
+        newWordsTyped[60 - (seconds + minutes * 60)] += 1;
+        setStats({ ...stats, wordsTyped: newWordsTyped });
+    }
+  };
 
   // function to handle key presses
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -33,7 +62,7 @@ const App = () => {
       const time = new Date();
       time.setSeconds(time.getSeconds() + 60);
       restart(time.getTime());
-     }
+    }
 
     const key = e.key;
     if (key === words.currentString && !inputWrong) {
@@ -44,6 +73,10 @@ const App = () => {
         currentString: words.nextString.substring(0, 1),
         nextString: words.nextString.substr(1),
       });
+
+      // update stats
+      updateKeystrokes("correct");
+      key === " " && updateKeystrokes("space");
     } else if (key === "Backspace") {
       // if backspace pressed
       if (inputWrong) {
@@ -72,6 +105,7 @@ const App = () => {
           nextString: words.currentString + words.nextString,
         });
       }
+      updateKeystrokes("backspace");
     } else if (key.match("^[a-zA-Z]$")) {
       // if the key pressed is incorrect
       const firstMistake = inputWrong.length === 0;
@@ -85,6 +119,7 @@ const App = () => {
           : words.nextString.substr(1),
       });
       setInputWrong(inputWrong + key);
+      updateKeystrokes("incorrect");
     }
   };
 
@@ -110,12 +145,16 @@ const App = () => {
       onKeyDown={(e) => handleKeyPress(e)}
     >
       <div className="w-3/4 relative block max-w-4xl">
-        {isRunning && words.prevString && <Timer seconds={seconds} minutes={minutes} />}
+        {isRunning && words.prevString && (
+          <Timer seconds={seconds} minutes={minutes} />
+        )}
         <motion.div
           layout
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`w-full text-justify font-mono bg-gray-800 rounded-lg p-5 ${!words.nextString && "animate-pulse"}`}
+          className={`w-full text-justify font-mono bg-gray-800 rounded-lg p-5 ${
+            !words.nextString && "animate-pulse"
+          }`}
         >
           {(words.nextString || words.prevString) && (
             <>
@@ -143,6 +182,7 @@ const App = () => {
             </>
           )}
         </motion.div>
+        {/* <Dashbaord /> */}
       </div>
     </div>
   );
