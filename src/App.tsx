@@ -32,25 +32,26 @@ const App = () => {
 
   // function to update the number of correct & incorrect keystrokes
   const updateKeystrokes = (keystroke: string) => {
+    const currentTime = seconds === 0 && minutes === 0 ? 0 : 60 - (seconds + minutes * 60) 
     switch (keystroke) {
       case "correct":
         const newCorrectKeystrokes = stats.correctKeystrokes;
-        newCorrectKeystrokes[60 - (seconds + minutes * 60)] += 1;
+        newCorrectKeystrokes[currentTime] += 1;
         setStats({ ...stats, correctKeystrokes: newCorrectKeystrokes });
         break;
       case "backspace":
         const newBackspaceKeystrokes = stats.backspaceKeystrokes;
-        newBackspaceKeystrokes[60 - (seconds + minutes * 60)] += 1;
+        newBackspaceKeystrokes[currentTime] += 1;
         setStats({ ...stats, backspaceKeystrokes: newBackspaceKeystrokes });
         break;
       case "incorrect":
         const newIncorrectKeystrokes = stats.incorrectKeystrokes;
-        newIncorrectKeystrokes[60 - (seconds + minutes * 60)] += 1;
+        newIncorrectKeystrokes[currentTime] += 1;
         setStats({ ...stats, incorrectKeystrokes: newIncorrectKeystrokes });
         break;
       case "space": 
         const newWordsTyped = stats.wordsTyped;
-        newWordsTyped[60 - (seconds + minutes * 60)] += 1;
+        newWordsTyped[currentTime] += 1;
         setStats({ ...stats, wordsTyped: newWordsTyped });
     }
   };
@@ -182,7 +183,7 @@ const App = () => {
             </>
           )}
         </motion.div>
-        {/* <Dashbaord /> */}
+        <Dashbaord stats={stats} />
       </div>
     </div>
   );
