@@ -9,6 +9,7 @@
     "@types/react-dom": "^17.0.0",
     "framer-motion": "^4.1.17",
     "react": "^17.0.2",
+    "react-chartjs-2": "^3.0.4",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
     "react-timer-hook": "^3.0.4",
