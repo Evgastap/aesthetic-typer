@@ -18,10 +18,13 @@ const App = () => {
 
   // useTimer hook for tracking time spent typing
   const expiryTimestamp = new Date().getTime();
-  const { seconds, minutes, isRunning, restart } = useTimer({
+  const { seconds, minutes, restart } = useTimer({
     expiryTimestamp,
-    onExpire: () => console.log(stats),
+    onExpire: () => appState === "typing" && setAppState("summary")
   });
+
+  type appStateTypes = "idle" | "typing" | "summary";
+  const [appState, setAppState] = useState<appStateTypes>("idle");
 
   const [stats, setStats] = useState({
     correctKeystrokes: new Array(60).fill(0),
@@ -56,14 +59,17 @@ const App = () => {
     }
   };
 
+  const startTest = () => {
+    const time = new Date();
+    time.setSeconds(time.getSeconds() + 60);
+    restart(time.getTime());
+    setAppState("typing");
+  };
+
   // function to handle key presses
   const handleKeyPress = (e: React.KeyboardEvent) => {
     // start the timer if hasn't started yet
-    if (!isRunning) {
-      const time = new Date();
-      time.setSeconds(time.getSeconds() + 60);
-      restart(time.getTime());
-    }
+    if (appState === "idle") startTest();
 
     const key = e.key;
     if (key === words.currentString && !inputWrong) {
@@ -146,7 +152,7 @@ const App = () => {
       onKeyDown={(e) => handleKeyPress(e)}
     >
       <div className="w-3/4 relative block max-w-4xl">
-        {isRunning && words.prevString && (
+        {appState === "typing" && (
           <Timer seconds={seconds} minutes={minutes} />
         )}
         <motion.div
@@ -163,7 +169,7 @@ const App = () => {
               <motion.div
                 layout
                 transition={{ type: "tween", duration: 0.075 }}
-                className="text-green-300 inline absolute text-xl -mx-1 -my-1"
+                className="text-green-300 inline absolute text-xl mx-cursor -my-1"
               >
                 <motion.div
                   animate={{ opacity: [0, 1] }}
@@ -183,7 +189,7 @@ const App = () => {
             </>
           )}
         </motion.div>
-        <Dashbaord stats={stats} />
+        {appState === "summary" && <Dashbaord stats={stats} startTest={startTest} />}
       </div>
     </div>
   );

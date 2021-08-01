@@ -7,8 +7,11 @@ module.exports = {
         'darcula-blue': '#62E2F8',
         'darcula-pink': '#FA5EB2',
         'darcula-purple': '#BF9FF7',
-        'darcula-green': '#86F78B'
+        'darcula-green': '#86F78B',
       },
+      margin: {
+        'cursor': '-0.37rem;'
+      }
     },
   },
   variants: {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Line } from 'react-chartjs-2' 
+import { Line } from "react-chartjs-2";
 
 type DashboardProps = {
   stats: {
@@ -9,6 +9,7 @@ type DashboardProps = {
     backspaceKeystrokes: number[];
     wordsTyped: number[];
   };
+  startTest: () => void;
 };
 
 type CardProps = {
@@ -18,23 +19,26 @@ type CardProps = {
 };
 
 const mainAnitmationVariants = {
-	hidden: { opacity: 0 },
-	show: {
-	  opacity: 1,
-	  transition: {
-		staggerChildren: 0.3
-	  }
-	}
-  };
-  
-  const childrenAnimationVariants = {
-	hidden: { opacity: 0 },
-	show: { opacity: 1 }
-  };
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.3,
+    },
+  },
+};
+
+const childrenAnimationVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
+};
 
 const Card = ({ title, number, color }: CardProps) => {
   return (
-    <motion.div variants={childrenAnimationVariants} className="p-5 bg-gray-800 rounded-lg">
+    <motion.div
+      variants={childrenAnimationVariants}
+      className="p-5 bg-gray-800 rounded-lg"
+    >
       <span className="block">{title}</span>
       <span className={`block text-2xl font-extrabold text-${color}`}>
         {number}
@@ -43,15 +47,20 @@ const Card = ({ title, number, color }: CardProps) => {
   );
 };
 
-const Dashbaord = ({ stats }: DashboardProps) => {
-  
-	const cumulativeSum = (
+const Dashbaord = ({ stats, startTest }: DashboardProps) => {
+  const cumulativeSum = (
     (sum) => (value: number) =>
       (sum += value)
   )(0);
 
   return (
-    <motion.div initial="hidden" animate="show" variants={mainAnitmationVariants} transition={{staggerChildren: 0.5}}  className="w-full grid grid-cols-3 gap-3 text-center text-white">
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={mainAnitmationVariants}
+      transition={{ staggerChildren: 0.5 }}
+      className="w-full grid grid-cols-4 gap-3 text-center text-white mt-3"
+    >
       <Card
         title="Correct keystrokes"
         number={stats.correctKeystrokes.reduce(
@@ -78,10 +87,19 @@ const Dashbaord = ({ stats }: DashboardProps) => {
         number={stats.wordsTyped.reduce((a: number, b: number) => a + b, 0)}
         color="darcula-green"
       />
-      <motion.div variants={childrenAnimationVariants} className="p-5 bg-gray-800 rounded-lg col-span-2">
+      <motion.div
+        variants={childrenAnimationVariants}
+        className="p-5 bg-gray-800 rounded-lg col-span-3"
+      >
         <span className="block">Speed graph</span>
-        <span>
-        </span>
+        <span>WIP :)</span>
+      </motion.div>
+      <motion.div
+        variants={childrenAnimationVariants}
+        className="p-5 bg-gray-800 rounded-lg flex items-center justify-center cursor-pointer"
+        onClick={() => startTest()}
+      >
+        Restart!
       </motion.div>
     </motion.div>
   );
