@@ -96,7 +96,7 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
       </motion.div>
       <motion.div
         variants={childrenAnimationVariants}
-        className="p-5 bg-gray-800 rounded-lg flex items-center justify-center cursor-pointer"
+        className="p-5 bg-gray-800 rounded-lg flex items-center justify-center cursor-pointer hover:bg-darcula-purple transition duration-500"
         onClick={() => startTest()}
       >
         Restart!

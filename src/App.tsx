@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Timer from "./Timer";
 import { useTimer } from "react-timer-hook";
 import Dashboard from "./Dashboard";
+import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
 
 const App = () => {
   // state for the words you need to type
@@ -20,22 +21,28 @@ const App = () => {
   const expiryTimestamp = new Date().getTime();
   const { seconds, minutes, restart } = useTimer({
     expiryTimestamp,
-    onExpire: () => appState === "typing" && setAppState("summary")
+    onExpire: () => appState === "typing" && setAppState("summary"),
   });
 
-  type appStateTypes = "idle" | "typing" | "summary";
-  const [appState, setAppState] = useState<appStateTypes>("idle");
+  // app states, either idling before typing test, in progress, or on summary page
+  type appStateTypes = "loading" | "idle" | "typing" | "summary";
+  const [appState, setAppState] = useState<appStateTypes>("loading");
 
-  const [stats, setStats] = useState({
+  // statistics for the current session
+  const initialStats = {
     correctKeystrokes: new Array(60).fill(0),
     incorrectKeystrokes: new Array(60).fill(0),
     backspaceKeystrokes: new Array(60).fill(0),
     wordsTyped: new Array(60).fill(0),
-  });
+  };
+
+  // state for tracking statistics
+  const [stats, setStats] = useState(initialStats);
 
   // function to update the number of correct & incorrect keystrokes
   const updateKeystrokes = (keystroke: string) => {
-    const currentTime = seconds === 0 && minutes === 0 ? 0 : 60 - (seconds + minutes * 60) 
+    const currentTime =
+      seconds === 0 && minutes === 0 ? 0 : 60 - (seconds + minutes * 60);
     switch (keystroke) {
       case "correct":
         const newCorrectKeystrokes = stats.correctKeystrokes;
@@ -52,7 +59,7 @@ const App = () => {
         newIncorrectKeystrokes[currentTime] += 1;
         setStats({ ...stats, incorrectKeystrokes: newIncorrectKeystrokes });
         break;
-      case "space": 
+      case "space":
         const newWordsTyped = stats.wordsTyped;
         newWordsTyped[currentTime] += 1;
         setStats({ ...stats, wordsTyped: newWordsTyped });
@@ -62,9 +69,11 @@ const App = () => {
   // function to restart the typing test
   const restartTest = () => {
     if (appState === "summary") fetchWords();
+    setStats(initialStats);
     setAppState("idle");
   };
 
+  // function to start typing test
   const startTest = () => {
     const time = new Date();
     time.setSeconds(time.getSeconds() + 60);
@@ -136,18 +145,20 @@ const App = () => {
     }
   };
 
+  // function to fetch a new set of random words
   const fetchWords = () => {
     fetch("/.netlify/functions/random-words")
-    .then((res) => res.json())
-    .then((data) => {
-      // console.log(data.words);
-      data = data.words.join(" ");
-      setWords({
-        prevString: "",
-        currentString: data.substring(0, 1),
-        nextString: data.substring(1),
+      .then((res) => res.json())
+      .then((data) => {
+        // console.log(data.words);
+        data = data.words.join(" ");
+        setWords({
+          prevString: "",
+          currentString: data.substring(0, 1),
+          nextString: data.substring(1),
+        });
+        setAppState("idle");
       });
-    });
   };
 
   // useEffect to fetch random words on reload and set state
@@ -161,25 +172,26 @@ const App = () => {
       tabIndex={0}
       onKeyDown={(e) => handleKeyPress(e)}
     >
-      <div className="w-3/4 relative block max-w-4xl">
-        {appState === "typing" && (
-          <Timer seconds={seconds} minutes={minutes} />
-        )}
-        <motion.div
-          layout
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className={`w-full min-h-2 text-justify font-ubuntu text-lg bg-gray-800 rounded-lg p-5 ${
-            !words.nextString && "animate-pulse"
-          }`}
-        >
-          {(words.nextString || words.prevString) && (
-            <>
-              <div className="text-darcula-purple inline">{words.prevString}</div>
+      <div className="w-3/4 min-h-2 relative max-w-4xl flex justify-center">
+          {appState === "typing" && (
+            <Timer seconds={seconds} minutes={minutes} />
+          )}
+          {appState === "loading" ? (
+              <ClimbingBoxLoader color={"#BF9FF7"} />
+          ) : (
+            <motion.div
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`w-full text-justify font-ubuntu text-lg bg-gray-800 rounded-lg p-5`}
+            >
+              <div className="text-darcula-purple inline">
+                {words.prevString}
+              </div>
               <motion.div
                 layout
                 transition={{ type: "tween", duration: 0.075 }}
-                className="text-green-300 inline absolute text-xl mx-cursor "
+                className="text-green-300 inline absolute text-xl mx-cursor"
               >
                 <motion.div
                   animate={{ opacity: [0, 1] }}
@@ -196,10 +208,11 @@ const App = () => {
                 {/*inputWrong ? inputWrong : */ words.currentString}
               </div>
               <div className="text-white inline">{words.nextString}</div>
-            </>
+            </motion.div>
           )}
-        </motion.div>
-        {appState === "summary" && <Dashboard stats={stats} startTest={restartTest} />}
+        {appState === "summary" && (
+          <Dashboard stats={stats} startTest={restartTest} />
+        )}
       </div>
     </div>
   );
