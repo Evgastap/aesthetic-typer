@@ -40,7 +40,7 @@ const Card = ({ title, number, color }: CardProps) => {
       className="p-5 bg-gray-800 rounded-lg"
     >
       <span className="block">{title}</span>
-      <span className={`block text-2xl font-extrabold text-${color}`}>
+      <span className={`block text-2xl font-extrabold ${color}`}>
         {number}
       </span>
     </motion.div>
@@ -67,7 +67,7 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
           (a: number, b: number) => a + b,
           0
         )}
-        color="darcula-blue"
+        color="text-darcula-blue"
       />
       <Card
         title="Incorrect keystrokes"
@@ -75,17 +75,17 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
           (a: number, b: number) => a + b,
           0
         )}
-        color="darcula-pink"
+        color="text-darcula-pink"
       />
       <Card
         title="Backspace keystrokes"
         number={stats.backspaceKeystrokes.reduce((a, b) => a + b, 0)}
-        color="darcula-purple"
+        color="text-darcula-purple"
       />
       <Card
         title="Words typed"
         number={stats.wordsTyped.reduce((a: number, b: number) => a + b, 0)}
-        color="darcula-green"
+        color="text-darcula-green"
       />
       <motion.div
         variants={childrenAnimationVariants}

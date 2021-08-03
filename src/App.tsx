@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Timer from "./Timer";
 import { useTimer } from "react-timer-hook";
-import Dashbaord from "./Dashbaord";
+import Dashboard from "./Dashboard";
 
 const App = () => {
   // state for the words you need to type
@@ -57,6 +57,12 @@ const App = () => {
         newWordsTyped[currentTime] += 1;
         setStats({ ...stats, wordsTyped: newWordsTyped });
     }
+  };
+
+  // function to restart the typing test
+  const restartTest = () => {
+    if (appState === "summary") fetchWords();
+    setAppState("idle");
   };
 
   const startTest = () => {
@@ -130,19 +136,23 @@ const App = () => {
     }
   };
 
+  const fetchWords = () => {
+    fetch("/.netlify/functions/random-words")
+    .then((res) => res.json())
+    .then((data) => {
+      // console.log(data.words);
+      data = data.words.join(" ");
+      setWords({
+        prevString: "",
+        currentString: data.substring(0, 1),
+        nextString: data.substring(1),
+      });
+    });
+  };
+
   // useEffect to fetch random words on reload and set state
   useEffect(() => {
-    fetch("/.netlify/functions/random-words")
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log(data.words);
-        data = data.words.join(" ");
-        setWords({
-          prevString: "",
-          currentString: data.substring(0, 1),
-          nextString: data.substring(1),
-        });
-      });
+    fetchWords();
   }, []);
 
   return (
@@ -159,7 +169,7 @@ const App = () => {
           layout
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`w-full text-justify font-mono bg-gray-800 rounded-lg p-5 ${
+          className={`w-full min-h-2 text-justify font-ubuntu text-lg bg-gray-800 rounded-lg p-5 ${
             !words.nextString && "animate-pulse"
           }`}
         >
@@ -169,7 +179,7 @@ const App = () => {
               <motion.div
                 layout
                 transition={{ type: "tween", duration: 0.075 }}
-                className="text-green-300 inline absolute text-xl mx-cursor -my-1"
+                className="text-green-300 inline absolute text-xl mx-cursor "
               >
                 <motion.div
                   animate={{ opacity: [0, 1] }}
@@ -189,7 +199,7 @@ const App = () => {
             </>
           )}
         </motion.div>
-        {appState === "summary" && <Dashbaord stats={stats} startTest={startTest} />}
+        {appState === "summary" && <Dashboard stats={stats} startTest={restartTest} />}
       </div>
     </div>
   );

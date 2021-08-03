@@ -2,6 +2,9 @@ module.exports = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    fontFamily: {
+      'ubuntu': 'Ubuntu Mono'
+    },
     extend: {
       colors: {
         'darcula-blue': '#62E2F8',
@@ -11,7 +14,7 @@ module.exports = {
       },
       margin: {
         'cursor': '-0.37rem;'
-      }
+      },
     },
   },
   variants: {
