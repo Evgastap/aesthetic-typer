@@ -172,48 +172,44 @@ const App = () => {
       tabIndex={0}
       onKeyDown={(e) => handleKeyPress(e)}
     >
-      <div className="w-3/4 min-h-2 relative max-w-4xl flex justify-center">
+      {appState === "loading" ? (
+        <ClimbingBoxLoader color={"#BF9FF7"} />
+      ) : (
+        <div className="w-3/4 min-h-2 relative max-w-4xl justify-center">
           {appState === "typing" && (
             <Timer seconds={seconds} minutes={minutes} />
           )}
-          {appState === "loading" ? (
-              <ClimbingBoxLoader color={"#BF9FF7"} />
-          ) : (
+          <motion.div
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`w-full text-justify font-ubuntu text-lg bg-gray-800 rounded-lg p-5`}
+          >
+            <div className="text-darcula-purple inline">{words.prevString}</div>
             <motion.div
               layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className={`w-full text-justify font-ubuntu text-lg bg-gray-800 rounded-lg p-5`}
+              transition={{ type: "tween", duration: 0.075 }}
+              className="text-green-300 inline absolute text-xl mx-cursor"
             >
-              <div className="text-darcula-purple inline">
-                {words.prevString}
-              </div>
               <motion.div
-                layout
-                transition={{ type: "tween", duration: 0.075 }}
-                className="text-green-300 inline absolute text-xl mx-cursor"
+                animate={{ opacity: [0, 1] }}
+                transition={{ duration: 0.001 }}
               >
-                <motion.div
-                  animate={{ opacity: [0, 1] }}
-                  transition={{ duration: 0.001 }}
-                >
-                  |
-                </motion.div>
+                |
               </motion.div>
-              <div
-                className={`${
-                  inputWrong ? "text-red-400" : "text-white"
-                } inline`}
-              >
-                {/*inputWrong ? inputWrong : */ words.currentString}
-              </div>
-              <div className="text-white inline">{words.nextString}</div>
             </motion.div>
+            <div
+              className={`${inputWrong ? "text-red-400" : "text-white"} inline`}
+            >
+              {/*inputWrong ? inputWrong : */ words.currentString}
+            </div>
+            <div className="text-white inline">{words.nextString}</div>
+          </motion.div>
+          {appState === "summary" && (
+            <Dashboard stats={stats} startTest={restartTest} />
           )}
-        {appState === "summary" && (
-          <Dashboard stats={stats} startTest={restartTest} />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
