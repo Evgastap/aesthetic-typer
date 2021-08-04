@@ -168,16 +168,13 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
       <motion.div
         variants={childrenAnimationVariants}
         className="p-5 bg-gray-800 rounded-lg row-span-1 h-full flex items-center justify-center cursor-pointer hover:bg-darcula-purple transition duration-500"
-        whileHover="hover"
         onClick={() => startTest()}
       >
-        <motion.svg
+        <svg
           width="32px"
           height="32px"
           viewBox="0 0 303.596 303.596"
           className="mr-3"
-          variants={restartSvgVariants}
-          whileHover="hover"
         >
           <path
             style={{ fill: "#FFF" }}
@@ -193,7 +190,7 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
 	c23.948,31.284,58.647,51.37,97.702,56.557c6.534,0.868,13.165,1.308,19.708,1.308c32.486,0,63.39-10.514,89.369-30.402
 	c31.285-23.948,51.371-58.647,56.558-97.703C307.475,132.121,297.143,93.383,273.193,62.099z"
           />
-        </motion.svg>
+        </svg>
         Restart!
       </motion.div>
     </motion.div>
