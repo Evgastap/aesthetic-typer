@@ -6,7 +6,7 @@ const Footer = () => {
       href="https://github.com/Evgastap/evg-type-test"
       target="_blank"
       rel="noreferrer"
-      className="w-full absolute bottom-3 flex justify-center items-center text-white font-ubuntu"
+      className="w-full absolute bottom-5 flex justify-center items-center text-white font-ubuntu"
     >
       <span className="mr-2">View project on</span>
       <svg
