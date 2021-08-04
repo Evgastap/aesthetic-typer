@@ -37,12 +37,12 @@ const Card = ({ title, number, color }: CardProps) => {
   return (
     <motion.div
       variants={childrenAnimationVariants}
-      className="p-5 bg-gray-800 rounded-lg"
+      className="p-5 bg-gray-800 rounded-lg flex items-center justify-center"
     >
-      <span className="block">{title}</span>
-      <span className={`block text-2xl font-extrabold ${color}`}>
-        {number}
-      </span>
+      <div className="">
+        <div className="">{title}</div>
+        <div className={`text-2xl font-extrabold ${color}`}>{number}</div>
+      </div>
     </motion.div>
   );
 };
@@ -52,6 +52,23 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
     (sum) => (value: number) =>
       (sum += value)
   )(0);
+
+  const chartData = {
+    labels: Array.from(Array(60).keys()),
+    datasets: [
+      {
+        label: "WPM",
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgb(255, 99, 132)",
+        data: stats.wordsTyped
+          .map(cumulativeSum)
+          .map(function (n, i) {
+            return n / i;
+          })
+          .map((n) => n * 60),
+      },
+    ],
+  };
 
   return (
     <motion.div
@@ -89,14 +106,24 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
       />
       <motion.div
         variants={childrenAnimationVariants}
-        className="p-5 bg-gray-800 rounded-lg col-span-3"
+        className="p-5 bg-gray-800 rounded-lg col-span-3 row-span-3"
       >
         <span className="block">Speed graph</span>
-        <span>WIP :)</span>
+        <Line data={chartData} />
       </motion.div>
+      <Card
+        title="WPM"
+        number={stats.wordsTyped.reduce((a: number, b: number) => a + b, 0)}
+        color="text-darcula-green"
+      />
+      <Card
+        title="CPM"
+        number={stats.correctKeystrokes.reduce((a: number, b: number) => a + b, 0)}
+        color="text-darcula-green"
+      />
       <motion.div
         variants={childrenAnimationVariants}
-        className="p-5 bg-gray-800 rounded-lg flex items-center justify-center cursor-pointer hover:bg-darcula-purple transition duration-500"
+        className="p-5 bg-gray-800 rounded-lg row-span-1 h-full flex items-center justify-center cursor-pointer hover:bg-darcula-purple transition duration-500"
         onClick={() => startTest()}
       >
         Restart!
