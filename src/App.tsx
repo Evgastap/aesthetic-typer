@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
 import Timer from "./Timer";
 import { useTimer } from "react-timer-hook";
 import Dashboard from "./Dashboard";

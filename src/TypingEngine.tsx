@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { WatchDirectoryFlags } from "typescript";
 
 type EngineProps = {
   inputWrong: string;
@@ -23,15 +22,14 @@ const TypingEngine = ({ inputWrong, words, wordArray }: EngineProps) => {
 
   
   useEffect(() => {
-    var i = 1;
-    while (nextWordsRef.current!.getClientRects().length < 4) {
+   if (nextWordsRef.current!.getClientRects().length < 4) {
       setNewWords({
         ...newWords,
-        nextString: wordArray.slice(0, i).join(" "),
+        nextString: newWords.nextString + wordArray[0] + " ",
       });
-      i = i + 1;
+      wordArray.shift();
     }
-  }, [nextWordsRef.current]);
+  }, [wordArray, newWords]);
 
 
 

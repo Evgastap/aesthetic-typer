@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Line, defaults } from "react-chartjs-2";
 
@@ -38,10 +38,6 @@ const childrenAnimationVariants = {
   hidden: { opacity: 0 },
   show: { opacity: 1 },
   hover: {},
-};
-
-const restartSvgVariants = {
-  hover: { rotate: 180 },
 };
 
 const Card = ({ title, number, color }: CardProps) => {
