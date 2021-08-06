@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Timer from "./Timer";
 import { useTimer } from "react-timer-hook";
 import Dashboard from "./Dashboard";
 import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
+import TypingEngine from "./TypingEngine";
 
 const App = () => {
   // state for the words you need to type
@@ -16,6 +17,8 @@ const App = () => {
   // state for storing incorrect input
   // todo: move to words state
   const [inputWrong, setInputWrong] = useState("");
+
+  const [wordArray, setWordArray] = useState([]);
 
   // useTimer hook for tracking time spent typing
   const expiryTimestamp = new Date().getTime();
@@ -152,12 +155,14 @@ const App = () => {
       .then((data) => {
         // console.log(data.words);
         data = data.words.join(" ");
+        setWordArray(data.split(" "));
         setWords({
           prevString: "",
           currentString: data.substring(0, 1),
           nextString: data.substring(1),
         });
         setAppState("idle");
+        if(nextStringDiv.current !== null) console.log(nextStringDiv.current!.getClientRects())
       });
   };
 
@@ -165,6 +170,8 @@ const App = () => {
   useEffect(() => {
     fetchWords();
   }, []);
+
+  const nextStringDiv = useRef<HTMLDivElement>(null)
 
   return (
     <div
@@ -179,32 +186,7 @@ const App = () => {
           {appState === "typing" && (
             <Timer seconds={seconds} minutes={minutes} />
           )}
-          <motion.div
-            layout
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className={`w-full text-justify font-ubuntu text-lg bg-gray-800 rounded-lg p-5`}
-          >
-            <div className="text-darcula-purple inline">{words.prevString}</div>
-            <motion.div
-              layout
-              transition={{ type: "tween", duration: 0.075 }}
-              className="text-green-300 inline absolute text-xl mx-cursor"
-            >
-              <motion.div
-                animate={{ opacity: [0, 1] }}
-                transition={{ duration: 0.001 }}
-              >
-                |
-              </motion.div>
-            </motion.div>
-            <div
-              className={`${inputWrong ? "text-red-400" : "text-white"} inline`}
-            >
-              {/*inputWrong ? inputWrong : */ words.currentString}
-            </div>
-            <div className="text-white inline">{words.nextString}</div>
-          </motion.div>
+          <TypingEngine inputWrong={inputWrong} words={words} wordArray={wordArray} />
           {appState === "summary" && (
             <Dashboard stats={stats} startTest={restartTest} />
           )}
