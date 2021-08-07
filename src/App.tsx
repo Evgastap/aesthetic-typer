@@ -4,7 +4,6 @@ import Timer from "./Timer";
 import { useTimer } from "react-timer-hook";
 import Dashboard from "./Dashboard";
 import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
-import TypingEngine from "./TypingEngine";
 
 const App = () => {
   // state for the words you need to type
@@ -18,8 +17,6 @@ const App = () => {
   // state for storing incorrect input
   // todo: move to words state
   const [inputWrong, setInputWrong] = useState("");
-
-  const [wordArray, setWordArray] = useState([]);
 
   // useTimer hook for tracking time spent typing
   const expiryTimestamp = new Date().getTime();
@@ -181,7 +178,6 @@ const App = () => {
       .then((data) => {
         // console.log(data.words);
         data = data.words.join(" ");
-        setWordArray(data.split(" "));
         setWords({
           firstLineString: "",
           prevString: "",
@@ -203,7 +199,7 @@ const App = () => {
 
   return (
     <div
-      className="w-screen h-screen bg-gray-700 flex items-center justify-center"
+      className="w-screen h-screen bg-gray-700 flex items-center justify-center flex-col"
       tabIndex={0}
       onKeyDown={(e) => handleKeyPress(e)}
     >
