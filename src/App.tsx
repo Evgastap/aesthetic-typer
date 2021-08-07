@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Timer from "./Timer";
 import { useTimer } from "react-timer-hook";
@@ -8,6 +8,7 @@ import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
 const App = () => {
   // state for the words you need to type
   const [words, setWords] = useState({
+    firstLineString: "",
     prevString: "", // previously typed out letters
     currentString: "", // current letters you need to type, for input matching
     nextString: "", // next letters you need to type
@@ -38,6 +39,9 @@ const App = () => {
 
   // state for tracking statistics
   const [stats, setStats] = useState(initialStats);
+
+  // state for tracking how many lines the user has typed
+  const [lines, setLines] = useState({ linesTyped: 0, linesRemaining: 0 });
 
   // function to update the number of correct & incorrect keystrokes
   const updateKeystrokes = (keystroke: string) => {
@@ -81,6 +85,10 @@ const App = () => {
     setAppState("typing");
   };
 
+  const getNextDivLines = () => {
+    return nextWordsDivRef.current!.getClientRects().length;
+  };
+
   // function to handle key presses
   const handleKeyPress = (e: React.KeyboardEvent) => {
     // start the timer if hasn't started yet
@@ -91,10 +99,25 @@ const App = () => {
       // input is correct
       setInputWrong("");
       setWords({
-        prevString: words.prevString + words.currentString,
+        firstLineString:
+          getNextDivLines() !== lines.linesRemaining
+            ? words.prevString + words.currentString
+            : words.firstLineString,
+        prevString:
+          getNextDivLines() !== lines.linesRemaining
+            ? ""
+            : words.prevString + words.currentString,
         currentString: words.nextString.substring(0, 1),
         nextString: words.nextString.substr(1),
       });
+
+      // update number of lines typed
+      if (getNextDivLines() !== lines.linesRemaining) {
+        setLines({
+          linesTyped: lines.linesTyped + 1,
+          linesRemaining: lines.linesRemaining - 1,
+        });
+      }
 
       // update stats
       updateKeystrokes("correct");
@@ -105,6 +128,7 @@ const App = () => {
         // if there's already a string of wrong pressed keys
         setInputWrong(inputWrong.substr(0, inputWrong.length - 1));
         setWords({
+          ...words,
           prevString: words.prevString,
           // prevents current string from becoming empty
           currentString: words.currentString.substring(
@@ -119,6 +143,7 @@ const App = () => {
       } else {
         // if user is just trying to erase a correct key
         setWords({
+          ...words,
           prevString: words.prevString.substring(
             0,
             words.prevString.length - 1
@@ -132,6 +157,7 @@ const App = () => {
       // if the key pressed is incorrect
       const firstMistake = inputWrong.length === 0;
       setWords({
+        ...words,
         prevString: words.prevString,
         currentString: firstMistake
           ? words.currentString
@@ -153,11 +179,13 @@ const App = () => {
         // console.log(data.words);
         data = data.words.join(" ");
         setWords({
+          firstLineString: "",
           prevString: "",
           currentString: data.substring(0, 1),
           nextString: data.substring(1),
         });
         setAppState("idle");
+        setLines({ linesTyped: 0, linesRemaining: getNextDivLines() });
       });
   };
 
@@ -166,16 +194,19 @@ const App = () => {
     fetchWords();
   }, []);
 
+  // ref to the div containing next words; to check for updates to # lines typed
+  const nextWordsDivRef = useRef<HTMLDivElement>(null);
+
   return (
     <div
-      className="w-screen h-screen bg-gray-700 flex items-center justify-center"
+      className="w-screen h-screen bg-gray-700 flex items-center justify-center flex-col"
       tabIndex={0}
       onKeyDown={(e) => handleKeyPress(e)}
     >
       {appState === "loading" ? (
         <ClimbingBoxLoader color={"#BF9FF7"} />
       ) : (
-        <div className="w-3/4 min-h-2 relative max-w-4xl justify-center">
+        <div className="w-3/4 min-h-2 relative max-w-4xl justify-center p-5 bg-gray-800 rounded-lg block">
           {appState === "typing" && (
             <Timer seconds={seconds} minutes={minutes} />
           )}
@@ -183,8 +214,11 @@ const App = () => {
             layout
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className={`w-full text-justify font-ubuntu text-lg bg-gray-800 rounded-lg p-5`}
+            className="w-full text-justify font-ubuntu text-lg max-h-20 overflow-hidden"
           >
+            <div className="text-darcula-purple inline">
+              {words.firstLineString}
+            </div>
             <div className="text-darcula-purple inline">{words.prevString}</div>
             <motion.div
               layout
@@ -203,12 +237,14 @@ const App = () => {
             >
               {/*inputWrong ? inputWrong : */ words.currentString}
             </div>
-            <div className="text-white inline">{words.nextString}</div>
+            <div className="text-white inline" ref={nextWordsDivRef}>
+              {words.nextString}
+            </div>
           </motion.div>
-          {appState === "summary" && (
-            <Dashboard stats={stats} startTest={restartTest} />
-          )}
         </div>
+      )}
+      {appState === "summary" && (
+        <Dashboard stats={stats} startTest={restartTest} />
       )}
     </div>
   );
