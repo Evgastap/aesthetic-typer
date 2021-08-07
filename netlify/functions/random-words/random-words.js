@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 
 const handler = async function () {
   try {
-    const response = await fetch('https://popular-words-api.herokuapp.com/api/words/randomlist?size=50&minrank=1&maxrank=500', {
+    const response = await fetch('https://popular-words-api.herokuapp.com/api/words/randomlist?size=300&minrank=1&maxrank=500', {
       headers: { Accept: 'application/json' },
     })
     if (!response.ok) {
