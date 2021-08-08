@@ -8,7 +8,6 @@ import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
 const App = () => {
   // state for the words you need to type
   const [words, setWords] = useState({
-    firstLineString: "",
     prevString: "", // previously typed out letters
     currentString: "", // current letters you need to type, for input matching
     nextString: "", // next letters you need to type
@@ -99,14 +98,7 @@ const App = () => {
       // input is correct
       setInputWrong("");
       setWords({
-        firstLineString:
-          getNextDivLines() !== lines.linesRemaining
-            ? words.prevString + words.currentString
-            : words.firstLineString,
-        prevString:
-          getNextDivLines() !== lines.linesRemaining
-            ? ""
-            : words.prevString + words.currentString,
+        prevString: words.prevString + words.currentString,
         currentString: words.nextString.substring(0, 1),
         nextString: words.nextString.substr(1),
       });
@@ -179,7 +171,6 @@ const App = () => {
         // console.log(data.words);
         data = data.words.join(" ");
         setWords({
-          firstLineString: "",
           prevString: "",
           currentString: data.substring(0, 1),
           nextString: data.substring(1),
@@ -216,7 +207,9 @@ const App = () => {
             animate={{ opacity: 1 }}
             className="w-full text-justify font-ubuntu max-h-20 overflow-hidden"
           >
-            <motion.div animate={{ y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem` }}>
+            <motion.div
+              animate={{ y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem` }}
+            >
               <div className="text-darcula-purple inline">
                 {words.prevString}
               </div>
