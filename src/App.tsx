@@ -8,7 +8,6 @@ import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
 const App = () => {
   // state for the words you need to type
   const [words, setWords] = useState({
-    firstLineString: "",
     prevString: "", // previously typed out letters
     currentString: "", // current letters you need to type, for input matching
     nextString: "", // next letters you need to type
@@ -99,14 +98,7 @@ const App = () => {
       // input is correct
       setInputWrong("");
       setWords({
-        firstLineString:
-          getNextDivLines() !== lines.linesRemaining
-            ? words.prevString + words.currentString
-            : words.firstLineString,
-        prevString:
-          getNextDivLines() !== lines.linesRemaining
-            ? ""
-            : words.prevString + words.currentString,
+        prevString: words.prevString + words.currentString,
         currentString: words.nextString.substring(0, 1),
         nextString: words.nextString.substr(1),
       });
@@ -179,7 +171,6 @@ const App = () => {
         // console.log(data.words);
         data = data.words.join(" ");
         setWords({
-          firstLineString: "",
           prevString: "",
           currentString: data.substring(0, 1),
           nextString: data.substring(1),
@@ -199,7 +190,7 @@ const App = () => {
 
   return (
     <div
-      className="w-screen h-screen bg-gray-700 flex items-center justify-center flex-col"
+      className="w-screen h-screen bg-gray-700 flex items-center justify-center flex-col text-lg"
       tabIndex={0}
       onKeyDown={(e) => handleKeyPress(e)}
     >
@@ -214,32 +205,35 @@ const App = () => {
             layout
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full text-justify font-ubuntu text-lg max-h-20 overflow-hidden"
+            className="w-full text-justify font-ubuntu max-h-20 overflow-hidden"
           >
-            <div className="text-darcula-purple inline">
-              {words.firstLineString}
-            </div>
-            <div className="text-darcula-purple inline">{words.prevString}</div>
-            <motion.div
-              layout
-              transition={{ type: "tween", duration: 0.075 }}
-              className="text-green-300 inline absolute text-xl mx-cursor"
-            >
+            <motion.div animate={{ y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem` }}>
+              <div className="text-darcula-purple inline">
+                {words.prevString}
+              </div>
               <motion.div
-                animate={{ opacity: [0, 1] }}
-                transition={{ duration: 0.001 }}
+                layout
+                transition={{ type: "tween", duration: 0.075 }}
+                className="text-green-300 inline absolute text-xl mx-cursor"
               >
-                |
+                <motion.div
+                  animate={{ opacity: [0, 1] }}
+                  transition={{ duration: 0.001 }}
+                >
+                  |
+                </motion.div>
               </motion.div>
+              <div
+                className={`${
+                  inputWrong ? "text-red-400" : "text-white"
+                } inline`}
+              >
+                {/*inputWrong ? inputWrong : */ words.currentString}
+              </div>
+              <div className="text-white inline" ref={nextWordsDivRef}>
+                {words.nextString}
+              </div>
             </motion.div>
-            <div
-              className={`${inputWrong ? "text-red-400" : "text-white"} inline`}
-            >
-              {/*inputWrong ? inputWrong : */ words.currentString}
-            </div>
-            <div className="text-white inline" ref={nextWordsDivRef}>
-              {words.nextString}
-            </div>
           </motion.div>
         </div>
       )}
