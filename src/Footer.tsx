@@ -1,21 +1,24 @@
 import React from "react";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import { useState } from "react";
 
 const Footer = () => {
-
   const [infoHover, setInfoHover] = useState(false);
 
   return (
     <>
-      <motion.div className="w-1/2 bg-white rounded-lg shadow-md p-6 absolute top-0 left-1/4" animate={{y: `${infoHover ? '10px' : '-125%'}`}}>
+      {infoHover !== undefined && <motion.div
+        className="w-1/2 bg-white rounded-lg shadow-md p-6 absolute top-0 left-1/4"
+        initial={{ y: "-125%" }}
+        animate={{ y: `${infoHover ? "10px" : "-125%"}` }}
+      >
         <span className="w-full  block leading-normal text-gray-800 text-md text-justify">
           This site was built as a means to measure your typing speed with a
           pleasent interface. Start typing, and the countdown will begin. As the
           60 seconds are up, you will see your statistics, such as WPM, errors,
           keystrokes, and more.
         </span>
-      </motion.div>
+      </motion.div>}
 
       <footer className="absolute w-full bottom-5 flex flex-row justify-center items-center text-white font-ubuntu">
         <a
@@ -42,7 +45,11 @@ const Footer = () => {
           </svg>
         </a>
         <div className="ml-5"> | </div>
-        <motion.div className="text-white inline ml-5 cursor-pointer" onHoverStart={() => setInfoHover(true)} onHoverEnd={() => setInfoHover(false)}>
+        <motion.div
+          className="text-white inline ml-5 cursor-pointer"
+          onHoverStart={() => setInfoHover(true)}
+          onHoverEnd={() => setInfoHover(false)}
+        >
           The heck is this site?
         </motion.div>
       </footer>
