@@ -205,7 +205,7 @@ const App = () => {
             layout
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="w-full text-justify font-ubuntu max-h-20 overflow-hidden"
+            className="w-full text-justify font-ubuntu max-h-20 overflow-hidden px-1"
           >
             <motion.div
               animate={{ y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem` }}
