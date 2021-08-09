@@ -4,6 +4,7 @@ import Timer from "./Timer";
 import { useTimer } from "react-timer-hook";
 import Dashboard from "./Dashboard";
 import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
+import { TOTAL_SECONDS } from "./Constants";
 
 const App = () => {
   // state for the words you need to type
@@ -30,10 +31,10 @@ const App = () => {
 
   // statistics for the current session
   const initialStats = {
-    correctKeystrokes: new Array(60).fill(0),
-    incorrectKeystrokes: new Array(60).fill(0),
-    backspaceKeystrokes: new Array(60).fill(0),
-    wordsTyped: new Array(60).fill(0),
+    correctKeystrokes: new Array(TOTAL_SECONDS).fill(0),
+    incorrectKeystrokes: new Array(TOTAL_SECONDS).fill(0),
+    backspaceKeystrokes: new Array(TOTAL_SECONDS).fill(0),
+    wordsTyped: new Array(TOTAL_SECONDS).fill(0),
   };
 
   // state for tracking statistics
@@ -45,7 +46,9 @@ const App = () => {
   // function to update the number of correct & incorrect keystrokes
   const updateKeystrokes = (keystroke: string) => {
     const currentTime =
-      seconds === 0 && minutes === 0 ? 0 : 60 - (seconds + minutes * 60);
+      seconds === 0 && minutes === 0
+        ? 0
+        : TOTAL_SECONDS - (seconds + minutes * 60);
     switch (keystroke) {
       case "correct":
         const newCorrectKeystrokes = stats.correctKeystrokes;
@@ -79,11 +82,12 @@ const App = () => {
   // function to start typing test
   const startTest = () => {
     const time = new Date();
-    time.setSeconds(time.getSeconds() + 60);
+    time.setSeconds(time.getSeconds() + TOTAL_SECONDS);
     restart(time.getTime());
     setAppState("typing");
   };
 
+  // function to return the remaining lines user needs to type
   const getNextDivLines = () => {
     return nextWordsDivRef.current!.getClientRects().length;
   };
@@ -189,42 +193,62 @@ const App = () => {
   const nextWordsDivRef = useRef<HTMLDivElement>(null);
 
   return (
+    // parent div
     <div
       className="w-screen h-screen bg-gray-700 flex items-center justify-center flex-col text-lg"
       tabIndex={0}
       onKeyDown={(e) => handleKeyPress(e)}
     >
       {appState === "loading" ? (
+        // loader for when words are loading
         <ClimbingBoxLoader color={"#BF9FF7"} />
       ) : (
-        <div className="w-3/4 min-h-2 relative max-w-4xl justify-center p-5 bg-gray-800 rounded-lg block">
+        // parent div with dark background
+        <div className="w-3/4 min-h-2 relative max-w-4xl justify-center p-5 bg-gray-800 rounded-lg block overflow-hidden">
+          {/* progress bar showing seconds remaining */}
+          <motion.div
+            className="h-1 bg-darcula-green relative -top-5 -mx-5"
+            initial={{ width: 0 }}
+            animate={{
+              width: `calc(${
+                ((TOTAL_SECONDS - seconds - minutes * 60) / TOTAL_SECONDS) * 100
+              }% + 40px)`,
+            }}
+          ></motion.div>
           {appState === "typing" && (
+            // timer of seconds remaining
             <Timer seconds={seconds} minutes={minutes} />
           )}
+          {/* div containing the text */}
           <motion.div
             layout
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="w-full text-justify font-ubuntu max-h-20 overflow-hidden px-1"
           >
+            {/* div to scroll text after user types > 2 lines */}
             <motion.div
               animate={{ y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem` }}
             >
+              {/* div for correctly typed text */}
               <div className="text-darcula-purple inline">
                 {words.prevString}
               </div>
+              {/* outer div for cursor to smooth the motion after typing */}
               <motion.div
                 layout
                 transition={{ type: "tween", duration: 0.075 }}
                 className="text-green-300 inline absolute text-xl mx-cursor"
               >
+                {/* inner div for cursor for blinking animation */}
                 <motion.div
                   animate={{ opacity: [0, 1] }}
-                  transition={{ duration: 0.001 }}
+                  transition={{ duration: 0.1 }}
                 >
                   |
                 </motion.div>
               </motion.div>
+              {/* div for incorrectly typed words */}
               <div
                 className={`${
                   inputWrong ? "text-red-400" : "text-white"
@@ -232,6 +256,7 @@ const App = () => {
               >
                 {/*inputWrong ? inputWrong : */ words.currentString}
               </div>
+              {/* div for remaining chars to type */}
               <div className="text-white inline" ref={nextWordsDivRef}>
                 {words.nextString}
               </div>
@@ -239,6 +264,7 @@ const App = () => {
           </motion.div>
         </div>
       )}
+      {/* summary dashboard for after type test */}
       {appState === "summary" && (
         <Dashboard stats={stats} startTest={restartTest} />
       )}
