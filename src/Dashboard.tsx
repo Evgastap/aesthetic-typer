@@ -97,7 +97,7 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
         animate="show"
         variants={mainAnitmationVariants}
         transition={{ staggerChildren: 0.5 }}
-        className="w-3/4 max-w-4xl grid grid-cols-4 gap-3 text-center text-white mt-3"
+        className="w-3/4 max-w-4xl grid grid-cols-4 gap-3 text-center text-white text-base mt-3"
       >
         <Card
           title="Correct keystrokes"
