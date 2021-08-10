@@ -149,7 +149,7 @@ const App = () => {
         });
       }
       updateKeystrokes("backspace");
-    } else if (key.match("^[a-zA-Z]$")) {
+    } else if (key.match("^[a-zA-Z]$|^ $")) {
       // if the key pressed is incorrect
       const firstMistake = inputWrong.length === 0;
       setWords({
