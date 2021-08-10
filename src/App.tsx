@@ -118,7 +118,7 @@ const App = () => {
       // update stats
       updateKeystrokes("correct");
       key === " " && updateKeystrokes("space");
-    } else if (key === "Backspace") {
+    } else if (key === "Backspace" && words.prevString.length !== 0) {
       // if backspace pressed
       if (inputWrong) {
         // if there's already a string of wrong pressed keys
