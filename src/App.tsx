@@ -251,7 +251,7 @@ const App = () => {
               {/* div for incorrectly typed words */}
               <div
                 className={`${
-                  inputWrong ? "text-red-400" : "text-white"
+                  inputWrong ? "text-red-400 bg-gray-700" : "text-white"
                 } inline`}
               >
                 {/*inputWrong ? inputWrong : */ words.currentString}
