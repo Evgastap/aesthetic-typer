@@ -136,7 +136,7 @@ const App = () => {
               ? words.nextString
               : words.currentString.substr(-1) + words.nextString,
         });
-      } else {
+      } else if (words.prevString.length !== 0) {
         // if user is just trying to erase a correct key
         setWords({
           ...words,
