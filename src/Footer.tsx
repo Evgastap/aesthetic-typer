@@ -13,7 +13,7 @@ const Footer = () => {
         animate={{ y: `${infoHover ? "10px" : "-125%"}` }}
       >
         <span className="w-full  block leading-normal text-gray-800 text-md text-justify">
-          This site was built as a means to measure your typing speed with a
+          This site was built as a way to measure your typing speed with a
           pleasent interface. Start typing, and the countdown will begin. As the
           60 seconds are up, you will see your statistics, such as WPM, errors,
           keystrokes, and more.
