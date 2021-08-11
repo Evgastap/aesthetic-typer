@@ -118,7 +118,7 @@ const App = () => {
       // update stats
       updateKeystrokes("correct");
       key === " " && updateKeystrokes("space");
-    } else if (key === "Backspace" && words.prevString.length !== 0) {
+    } else if (key === "Backspace") {
       // if backspace pressed
       if (inputWrong) {
         // if there's already a string of wrong pressed keys
@@ -136,7 +136,7 @@ const App = () => {
               ? words.nextString
               : words.currentString.substr(-1) + words.nextString,
         });
-      } else {
+      } else if (words.prevString.length !== 0) {
         // if user is just trying to erase a correct key
         setWords({
           ...words,
