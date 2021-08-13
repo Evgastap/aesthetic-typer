@@ -197,7 +197,7 @@ const App = () => {
     <div
       className="w-screen h-screen bg-gray-700 flex items-center justify-center flex-col text-lg"
       tabIndex={0}
-      onKeyDown={(e) => handleKeyPress(e)}
+      onKeyDown={(e) => appState !== "summary" && handleKeyPress(e)}
     >
       {appState === "loading" ? (
         // loader for when words are loading
