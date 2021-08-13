@@ -5,6 +5,11 @@ import { useTimer } from "react-timer-hook";
 import Dashboard from "./Dashboard";
 import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
 import { TOTAL_SECONDS } from "./Constants";
+import Cursor from "./atoms/Cursor";
+import CorrectWords from "./atoms/CorrectWords";
+import IncorrectWords from "./atoms/IncorrectWords";
+import RemainingWords from "./atoms/RemainingWords";
+import ProgressBar from "./atoms/ProgressBar";
 
 const App = () => {
   // state for the words you need to type
@@ -207,16 +212,7 @@ const App = () => {
       ) : (
         // parent div with dark background
         <div className="w-3/4 min-h-2 relative max-w-4xl justify-center p-5 bg-gray-800 rounded-lg block overflow-hidden">
-          {/* progress bar showing seconds remaining */}
-          <motion.div
-            className="h-1 bg-darcula-green relative -top-5 -mx-5"
-            initial={{ width: 0 }}
-            animate={{
-              width: `calc(${
-                ((TOTAL_SECONDS - seconds - minutes * 60) / TOTAL_SECONDS) * 100
-              }% + 40px)`,
-            }}
-          ></motion.div>
+          <ProgressBar seconds={seconds} minutes={minutes} />
           {appState === "typing" && (
             // timer of seconds remaining
             <Timer seconds={seconds} minutes={minutes} />
@@ -232,36 +228,10 @@ const App = () => {
             <motion.div
               animate={{ y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem` }}
             >
-              {/* div for correctly typed text */}
-              <div className="text-darcula-purple inline">
-                {words.prevString}
-              </div>
-              {/* outer div for cursor to smooth the motion after typing */}
-              <motion.div
-                layout
-                transition={{ type: "tween", duration: 0.075 }}
-                className="text-green-300 inline absolute text-xl mx-cursor"
-              >
-                {/* inner div for cursor for blinking animation */}
-                <motion.div
-                  animate={{ opacity: [0, 1] }}
-                  transition={{ duration: 0.1 }}
-                >
-                  |
-                </motion.div>
-              </motion.div>
-              {/* div for incorrectly typed words */}
-              <div
-                className={`${
-                  inputWrong ? "text-red-400 bg-gray-700" : "text-white"
-                } inline`}
-              >
-                {/*inputWrong ? inputWrong : */ words.currentString}
-              </div>
-              {/* div for remaining chars to type */}
-              <div className="text-white inline" ref={nextWordsDivRef}>
-                {words.nextString}
-              </div>
+              <CorrectWords prevString={words.prevString} />
+              <Cursor />
+              <IncorrectWords currentString={words.currentString} inputWrong={inputWrong} />
+              <RemainingWords nextString={words.nextString} nextWordsDivRef={nextWordsDivRef} />
             </motion.div>
           </motion.div>
         </div>
