@@ -16,12 +16,9 @@ const App = () => {
   const [words, setWords] = useState({
     prevString: "", // previously typed out letters
     currentString: "", // current letters you need to type, for input matching
+    wrongString: "", // wrongly typed letters
     nextString: "", // next letters you need to type
   });
-
-  // state for storing incorrect input
-  // todo: move to words state
-  const [inputWrong, setInputWrong] = useState("");
 
   // useTimer hook for tracking time spent typing
   const expiryTimestamp = new Date().getTime();
@@ -81,7 +78,6 @@ const App = () => {
   const restartTest = () => {
     if (appState === "summary") fetchWords();
     setStats(initialStats);
-    setInputWrong("");
     setLines({ linesTyped: 0, linesRemaining: 0 });
     setAppState("idle");
   };
@@ -105,12 +101,12 @@ const App = () => {
     if (appState === "idle") startTest();
 
     const key = e.key;
-    if (key === words.currentString && !inputWrong) {
+    if (key === words.currentString && !words.wrongString) {
       // input is correct
-      setInputWrong("");
       setWords({
         prevString: words.prevString + words.currentString,
         currentString: words.nextString.substring(0, 1),
+        wrongString: "",
         nextString: words.nextString.substr(1),
       });
 
@@ -127,9 +123,8 @@ const App = () => {
       key === " " && updateKeystrokes("space");
     } else if (key === "Backspace") {
       // if backspace pressed
-      if (inputWrong) {
+      if (words.wrongString) {
         // if there's already a string of wrong pressed keys
-        setInputWrong(inputWrong.substr(0, inputWrong.length - 1));
         setWords({
           ...words,
           prevString: words.prevString,
@@ -138,8 +133,12 @@ const App = () => {
             0,
             Math.max(words.currentString.length - 1, 1)
           ),
+          wrongString: words.wrongString.substr(
+            0,
+            words.wrongString.length - 1
+          ),
           nextString:
-            inputWrong.length === 1
+            words.wrongString.length === 1
               ? words.nextString
               : words.currentString.substr(-1) + words.nextString,
         });
@@ -158,18 +157,18 @@ const App = () => {
       updateKeystrokes("backspace");
     } else if (key.match("^[a-zA-Z]$|^ $")) {
       // if the key pressed is incorrect
-      const firstMistake = inputWrong.length === 0;
+      const firstMistake = words.wrongString.length === 0;
       setWords({
         ...words,
         prevString: words.prevString,
         currentString: firstMistake
           ? words.currentString
           : words.currentString + words.nextString.substring(0, 1),
+        wrongString: words.wrongString + key,
         nextString: firstMistake
           ? words.nextString
           : words.nextString.substr(1),
       });
-      setInputWrong(inputWrong + key);
       updateKeystrokes("incorrect");
     }
   };
@@ -184,6 +183,7 @@ const App = () => {
         setWords({
           prevString: "",
           currentString: data.substring(0, 1),
+          wrongString: "",
           nextString: data.substring(1),
         });
         setAppState("idle");
@@ -230,8 +230,14 @@ const App = () => {
             >
               <CorrectWords prevString={words.prevString} />
               <Cursor />
-              <IncorrectWords currentString={words.currentString} inputWrong={inputWrong} />
-              <RemainingWords nextString={words.nextString} nextWordsDivRef={nextWordsDivRef} />
+              <IncorrectWords
+                currentString={words.currentString}
+                wrongString={words.wrongString}
+              />
+              <RemainingWords
+                nextString={words.nextString}
+                nextWordsDivRef={nextWordsDivRef}
+              />
             </motion.div>
           </motion.div>
         </div>
