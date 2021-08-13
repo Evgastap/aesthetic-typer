@@ -76,6 +76,8 @@ const App = () => {
   const restartTest = () => {
     if (appState === "summary") fetchWords();
     setStats(initialStats);
+    setInputWrong("");
+    setLines({ linesTyped: 0, linesRemaining: 0 });
     setAppState("idle");
   };
 
