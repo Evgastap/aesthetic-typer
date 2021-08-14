@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { Line, defaults } from "react-chartjs-2";
 
