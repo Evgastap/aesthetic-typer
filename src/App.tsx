@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Timer from "./Timer";
 import Dashboard from "./Dashboard";
 import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
@@ -10,8 +10,8 @@ import ProgressBar from "./atoms/ProgressBar";
 import useTyper from "./useTyper";
 
 const App = () => {
-
-  const [words, stats, lines, appState, time, nextWordsDivRef, utilFuncs] = useTyper();
+  const [words, stats, lines, appState, time, nextWordsDivRef, utilFuncs] =
+    useTyper();
 
   return (
     // parent div
@@ -20,46 +20,53 @@ const App = () => {
       tabIndex={0}
       onKeyDown={(e) => appState !== "summary" && utilFuncs.handleKeyPress(e)}
     >
-      {appState === "loading" ? (
-        // loader for when words are loading
-        <ClimbingBoxLoader color={"#BF9FF7"} />
-      ) : (
-        // parent div with dark background
-        <div className="w-3/4 min-h-2 relative max-w-4xl justify-center p-5 bg-gray-800 rounded-lg block overflow-hidden">
-          <ProgressBar seconds={time.seconds} minutes={time.minutes} />
-          {appState === "typing" && (
-            // timer of seconds remaining
-            <Timer seconds={time.seconds} minutes={time.minutes} />
-          )}
-          {/* div containing the text */}
+      <AnimatePresence>
+        {appState === "loading" ? (
+          // loader for when words are loading
+          <ClimbingBoxLoader color={"#BF9FF7"} />
+        ) : (
+          // parent div with dark background
           <motion.div
+            className="w-3/4 min-h-2 relative max-w-4xl justify-center p-5 bg-gray-800 rounded-lg block overflow-hidden"
             layout
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="w-full text-justify font-ubuntu max-h-20 overflow-hidden px-1"
           >
-            {/* div to scroll text after user types > 2 lines */}
+            <ProgressBar seconds={time.seconds} minutes={time.minutes} />
+            {appState === "typing" && (
+              // timer of seconds remaining
+              <Timer seconds={time.seconds} minutes={time.minutes} />
+            )}
+            {/* div containing the text */}
             <motion.div
-              animate={{ y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem` }}
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="w-full text-justify font-ubuntu max-h-20 overflow-hidden px-1"
             >
-              <CorrectWords prevString={words.prevString} />
-              <Cursor />
-              <IncorrectWords
-                currentString={words.currentString}
-                wrongString={words.wrongString}
-              />
-              <RemainingWords
-                nextString={words.nextString}
-                nextWordsDivRef={nextWordsDivRef}
-              />
+              {/* div to scroll text after user types > 2 lines */}
+              <motion.div
+                animate={{
+                  y: `${-1.75 * Math.max(0, lines.linesTyped - 1)}rem`,
+                }}
+              >
+                <CorrectWords prevString={words.prevString} />
+                <Cursor />
+                <IncorrectWords
+                  currentString={words.currentString}
+                  wrongString={words.wrongString}
+                />
+                <RemainingWords
+                  nextString={words.nextString}
+                  nextWordsDivRef={nextWordsDivRef}
+                />
+              </motion.div>
             </motion.div>
           </motion.div>
-        </div>
-      )}
-      {/* summary dashboard for after type test */}
-      {appState === "summary" && (
-        <Dashboard stats={stats} startTest={utilFuncs.restartTest} />
-      )}
+        )}
+        {/* summary dashboard for after type test */}
+        {appState === "summary" && (
+          <Dashboard stats={stats} startTest={utilFuncs.restartTest} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
