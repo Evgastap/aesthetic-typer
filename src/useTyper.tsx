@@ -57,11 +57,6 @@ const useTyper = () => {
         const newIncorrectKeystrokes = stats.incorrectKeystrokes;
         newIncorrectKeystrokes[currentTime] += 1;
         setStats({ ...stats, incorrectKeystrokes: newIncorrectKeystrokes });
-        break;
-      case "space":
-        const newWordsTyped = stats.wordsTyped;
-        newWordsTyped[currentTime] = words.prevString.split(" ").length;
-        setStats({ ...stats, wordsTyped: newWordsTyped });
     }
   };
 
@@ -186,6 +181,16 @@ const useTyper = () => {
   useEffect(() => {
     fetchWords();
   }, []);
+  
+  useEffect(() => {
+    const currentTime =
+    seconds === 0 && minutes === 0
+      ? 0
+      : TOTAL_SECONDS - (seconds + minutes * 60);
+    const newWordsTyped = stats.wordsTyped;
+    newWordsTyped[currentTime] = words.prevString.split(" ").length;
+    setStats({ ...stats, wordsTyped: newWordsTyped });
+  }, [seconds])
 
   // ref to the div containing next words; to check for updates to # lines typed
   const nextWordsDivRef = useRef<HTMLDivElement>(null);

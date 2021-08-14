@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Line, defaults } from "react-chartjs-2";
+import { TOTAL_SECONDS } from "./Constants";
 
 defaults.color = "#FFFFFF";
 defaults.scale.grid.color = "#374151";
@@ -68,7 +69,7 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
         borderColor: "rgb(255, 99, 132)",
         // color: "#FFFFFF",
         data: stats.wordsTyped
-          .map(cumulativeSum)
+          // .map(cumulativeSum)
           .map(function (n, i) {
             return n / i;
           })
@@ -121,7 +122,7 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
         />
         <Card
           title="Words typed / WPM"
-          number={stats.wordsTyped.reduce((a: number, b: number) => a + b, 0)}
+          number={stats.wordsTyped[TOTAL_SECONDS - 1]}
           color="text-darcula-green"
         />
         <motion.div
