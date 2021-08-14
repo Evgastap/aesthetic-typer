@@ -60,7 +60,7 @@ const useTyper = () => {
         break;
       case "space":
         const newWordsTyped = stats.wordsTyped;
-        newWordsTyped[currentTime] += 1;
+        newWordsTyped[currentTime] = words.prevString.split(" ").length;
         setStats({ ...stats, wordsTyped: newWordsTyped });
     }
   };
