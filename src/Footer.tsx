@@ -21,7 +21,7 @@ const Footer = () => {
 
       <footer className="absolute w-full bottom-5 flex flex-row justify-center items-center text-white font-ubuntu">
         <a
-          href="https://github.com/Evgastap/evg-type-test"
+          href="https://github.com/Evgastap/aesthetic-typer"
           target="_blank"
           rel="noreferrer"
           className="flex justify-center items-center"
