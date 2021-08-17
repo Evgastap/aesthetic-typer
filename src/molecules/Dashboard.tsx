@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Line, defaults } from "react-chartjs-2";
-import { TOTAL_SECONDS } from "./Constants";
+import { TOTAL_SECONDS } from "../Constants";
 
 defaults.color = "#FFFFFF";
 defaults.scale.grid.color = "#374151";

@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import Timer from "./Timer";
-import Dashboard from "./Dashboard";
+import Timer from "./atoms/Timer";
+import Dashboard from "./molecules/Dashboard";
 import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
 import Cursor from "./atoms/Cursor";
 import CorrectWords from "./atoms/CorrectWords";
