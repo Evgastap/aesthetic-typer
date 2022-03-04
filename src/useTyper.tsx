@@ -161,16 +161,19 @@ const useTyper = () => {
 
   // function to fetch a new set of random words
   const fetchWords = () => {
-    fetch("/.netlify/functions/random-words")
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log(data.words);
-        data = data.words.join(" ");
+    fetch("/words.txt")
+      .then((r) => r.text())
+      .then((text) => {
+        const dictionary = text.split("\n");
+        let wordString = "";
+        for (let i = 0; i < 500; i++) { 
+          wordString += dictionary[Math.floor(Math.random() * dictionary.length)] + " ";
+        }
         setWords({
           prevString: "",
-          currentString: data.substring(0, 1),
+          currentString: wordString.substring(0, 1),
           wrongString: "",
-          nextString: data.substring(1),
+          nextString: wordString.substring(1),
         });
         setAppState("idle");
         setLines({ linesTyped: 0, linesRemaining: getNextDivLines() });
@@ -181,16 +184,16 @@ const useTyper = () => {
   useEffect(() => {
     fetchWords();
   }, []);
-  
+
   useEffect(() => {
     const currentTime =
-    seconds === 0 && minutes === 0
-      ? 0
-      : TOTAL_SECONDS - (seconds + minutes * 60);
+      seconds === 0 && minutes === 0
+        ? 0
+        : TOTAL_SECONDS - (seconds + minutes * 60);
     const newWordsTyped = stats.wordsTyped;
     newWordsTyped[currentTime] = words.prevString.split(" ").length;
     setStats({ ...stats, wordsTyped: newWordsTyped });
-  }, [seconds])
+  }, [seconds]);
 
   // ref to the div containing next words; to check for updates to # lines typed
   const nextWordsDivRef = useRef<HTMLDivElement>(null);
