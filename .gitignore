@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/heroku/node_modules
 /.pnp
 .pnp.js
 
