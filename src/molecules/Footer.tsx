@@ -51,6 +51,10 @@ const Footer = () => {
         >
           The heck is this site?
         </motion.div>
+        <div className="ml-5"> | </div>
+        <div className="ml-5">
+          Made with ☕️ and ❤️ by <a className="underline" href="https://evgenyastapov.com">Evgeny Astapov</a>
+        </div>
       </footer>
     </>
   );
