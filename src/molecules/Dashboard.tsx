@@ -123,7 +123,7 @@ const Dashbaord = ({ stats, startTest }: DashboardProps) => {
       />
       <Card
         title="Words typed / WPM"
-        number={stats.wordsTyped[TOTAL_SECONDS - 1]}
+        number={stats.correctKeystrokes.reduce((a, b) => a + b, 0) / 5}
         color="text-darcula-green"
       />
       <motion.div
